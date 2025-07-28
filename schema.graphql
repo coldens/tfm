@@ -1,0 +1,1103 @@
+schema {
+  query: query_root
+  mutation: mutation_root
+}
+
+# whether this query should be cached (Hasura Cloud only)
+directive @cached(
+  # measured in seconds
+  ttl: Int! = 60
+
+  # refresh the cache entry
+  refresh: Boolean! = false
+) on QUERY
+
+# Boolean expression to compare columns of type "Boolean". All fields are combined with logical 'AND'.
+input Boolean_comparison_exp {
+  _eq: Boolean
+  _gt: Boolean
+  _gte: Boolean
+  _in: [Boolean!]
+  _is_null: Boolean
+  _lt: Boolean
+  _lte: Boolean
+  _neq: Boolean
+  _nin: [Boolean!]
+}
+
+type HTTPResponse {
+  body: String
+  headers: JSON
+  status: Int!
+  statusText: String!
+}
+
+# Boolean expression to compare columns of type "Int". All fields are combined with logical 'AND'.
+input Int_comparison_exp {
+  _eq: Int
+  _gt: Int
+  _gte: Int
+  _in: [Int!]
+  _is_null: Boolean
+  _lt: Int
+  _lte: Int
+  _neq: Int
+  _nin: [Int!]
+}
+
+scalar JSON
+
+type LLMResponse {
+  model: String!
+  text: String!
+  usage: UsageInfo
+}
+
+# Boolean expression to compare columns of type "String". All fields are combined with logical 'AND'.
+input String_comparison_exp {
+  _eq: String
+  _gt: String
+  _gte: String
+
+  # does the column match the given case-insensitive pattern
+  _ilike: String
+  _in: [String!]
+
+  # does the column match the given POSIX regular expression, case insensitive
+  _iregex: String
+  _is_null: Boolean
+
+  # does the column match the given pattern
+  _like: String
+  _lt: String
+  _lte: String
+  _neq: String
+
+  # does the column NOT match the given case-insensitive pattern
+  _nilike: String
+  _nin: [String!]
+
+  # does the column NOT match the given POSIX regular expression, case insensitive
+  _niregex: String
+
+  # does the column NOT match the given pattern
+  _nlike: String
+
+  # does the column NOT match the given POSIX regular expression, case sensitive
+  _nregex: String
+
+  # does the column NOT match the given SQL regular expression
+  _nsimilar: String
+
+  # does the column match the given POSIX regular expression, case sensitive
+  _regex: String
+
+  # does the column match the given SQL regular expression
+  _similar: String
+}
+
+type UsageInfo {
+  completionTokens: Int
+  promptTokens: Int
+  totalTokens: Int
+}
+
+scalar bigint
+
+# Boolean expression to compare columns of type "bigint". All fields are combined with logical 'AND'.
+input bigint_comparison_exp {
+  _eq: bigint
+  _gt: bigint
+  _gte: bigint
+  _in: [bigint!]
+  _is_null: Boolean
+  _lt: bigint
+  _lte: bigint
+  _neq: bigint
+  _nin: [bigint!]
+}
+
+# mutation root
+type mutation_root {
+  generateText(model: String = "gpt-3.5-turbo", prompt: String!): LLMResponse!
+  httpGet(headers: JSON, url: String!): HTTPResponse!
+  httpPost(body: JSON, headers: JSON, url: String!): HTTPResponse!
+}
+
+scalar numeric
+
+# Boolean expression to compare columns of type "numeric". All fields are combined with logical 'AND'.
+input numeric_comparison_exp {
+  _eq: numeric
+  _gt: numeric
+  _gte: numeric
+  _in: [numeric!]
+  _is_null: Boolean
+  _lt: numeric
+  _lte: numeric
+  _neq: numeric
+  _nin: [numeric!]
+}
+
+# column ordering options
+enum order_by {
+  # in ascending order, nulls last
+  asc
+
+  # in ascending order, nulls first
+  asc_nulls_first
+
+  # in ascending order, nulls last
+  asc_nulls_last
+
+  # in descending order, nulls first
+  desc
+
+  # in descending order, nulls first
+  desc_nulls_first
+
+  # in descending order, nulls last
+  desc_nulls_last
+}
+
+# columns and relationships of "device"
+type pebble_device {
+  address: String!
+  avatar: String!
+  beep: Int!
+  bulk_upload: Int!
+  bulk_upload_sampling_cnt: Int!
+  bulk_upload_sampling_freq: Int!
+  config: String!
+  configurable: Boolean!
+  created_at: timestamptz!
+  data_channel: Int!
+
+  # An array relationship
+  deviceRecord(
+    # distinct select on columns
+    distinct_on: [pebble_device_record_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [pebble_device_record_order_by!]
+
+    # filter the rows returned
+    where: pebble_device_record_bool_exp
+  ): [pebble_device_record!]!
+
+  # An aggregate relationship
+  deviceRecord_aggregate(
+    # distinct select on columns
+    distinct_on: [pebble_device_record_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [pebble_device_record_order_by!]
+
+    # filter the rows returned
+    where: pebble_device_record_bool_exp
+  ): pebble_device_record_aggregate!
+  firmware: String!
+  id: String!
+  name: String!
+  owner: String!
+  proposer: String!
+  real_firmware: String!
+  state: Int!
+  status: Int!
+  total_gas: Int!
+  type: Int!
+  updated_at: timestamptz!
+  upload_period: Int!
+}
+
+# aggregated selection of "device"
+type pebble_device_aggregate {
+  aggregate: pebble_device_aggregate_fields
+  nodes: [pebble_device!]!
+}
+
+# aggregate fields of "device"
+type pebble_device_aggregate_fields {
+  avg: pebble_device_avg_fields
+  count(columns: [pebble_device_select_column!], distinct: Boolean): Int!
+  max: pebble_device_max_fields
+  min: pebble_device_min_fields
+  stddev: pebble_device_stddev_fields
+  stddev_pop: pebble_device_stddev_pop_fields
+  stddev_samp: pebble_device_stddev_samp_fields
+  sum: pebble_device_sum_fields
+  var_pop: pebble_device_var_pop_fields
+  var_samp: pebble_device_var_samp_fields
+  variance: pebble_device_variance_fields
+}
+
+# aggregate avg on columns
+type pebble_device_avg_fields {
+  beep: Float
+  bulk_upload: Float
+  bulk_upload_sampling_cnt: Float
+  bulk_upload_sampling_freq: Float
+  data_channel: Float
+  state: Float
+  status: Float
+  total_gas: Float
+  type: Float
+  upload_period: Float
+}
+
+# Boolean expression to filter rows from the table "device". All fields are combined with a logical 'AND'.
+input pebble_device_bool_exp {
+  _and: [pebble_device_bool_exp!]
+  _not: pebble_device_bool_exp
+  _or: [pebble_device_bool_exp!]
+  address: String_comparison_exp
+  avatar: String_comparison_exp
+  beep: Int_comparison_exp
+  bulk_upload: Int_comparison_exp
+  bulk_upload_sampling_cnt: Int_comparison_exp
+  bulk_upload_sampling_freq: Int_comparison_exp
+  config: String_comparison_exp
+  configurable: Boolean_comparison_exp
+  created_at: timestamptz_comparison_exp
+  data_channel: Int_comparison_exp
+  deviceRecord: pebble_device_record_bool_exp
+  deviceRecord_aggregate: pebble_device_record_aggregate_bool_exp
+  firmware: String_comparison_exp
+  id: String_comparison_exp
+  name: String_comparison_exp
+  owner: String_comparison_exp
+  proposer: String_comparison_exp
+  real_firmware: String_comparison_exp
+  state: Int_comparison_exp
+  status: Int_comparison_exp
+  total_gas: Int_comparison_exp
+  type: Int_comparison_exp
+  updated_at: timestamptz_comparison_exp
+  upload_period: Int_comparison_exp
+}
+
+# aggregate max on columns
+type pebble_device_max_fields {
+  address: String
+  avatar: String
+  beep: Int
+  bulk_upload: Int
+  bulk_upload_sampling_cnt: Int
+  bulk_upload_sampling_freq: Int
+  config: String
+  created_at: timestamptz
+  data_channel: Int
+  firmware: String
+  id: String
+  name: String
+  owner: String
+  proposer: String
+  real_firmware: String
+  state: Int
+  status: Int
+  total_gas: Int
+  type: Int
+  updated_at: timestamptz
+  upload_period: Int
+}
+
+# aggregate min on columns
+type pebble_device_min_fields {
+  address: String
+  avatar: String
+  beep: Int
+  bulk_upload: Int
+  bulk_upload_sampling_cnt: Int
+  bulk_upload_sampling_freq: Int
+  config: String
+  created_at: timestamptz
+  data_channel: Int
+  firmware: String
+  id: String
+  name: String
+  owner: String
+  proposer: String
+  real_firmware: String
+  state: Int
+  status: Int
+  total_gas: Int
+  type: Int
+  updated_at: timestamptz
+  upload_period: Int
+}
+
+# Ordering options when selecting data from "device".
+input pebble_device_order_by {
+  address: order_by
+  avatar: order_by
+  beep: order_by
+  bulk_upload: order_by
+  bulk_upload_sampling_cnt: order_by
+  bulk_upload_sampling_freq: order_by
+  config: order_by
+  configurable: order_by
+  created_at: order_by
+  data_channel: order_by
+  deviceRecord_aggregate: pebble_device_record_aggregate_order_by
+  firmware: order_by
+  id: order_by
+  name: order_by
+  owner: order_by
+  proposer: order_by
+  real_firmware: order_by
+  state: order_by
+  status: order_by
+  total_gas: order_by
+  type: order_by
+  updated_at: order_by
+  upload_period: order_by
+}
+
+# columns and relationships of "device_record"
+type pebble_device_record {
+  accelerometer: String!
+  created_at: timestamptz!
+  gas_resistance: numeric!
+  gyroscope: String!
+  humidity: numeric!
+  id: String!
+  imei: String!
+  latitude: String!
+  light: numeric!
+  longitude: String!
+  operator: String!
+  pressure: numeric!
+  signature: String!
+  snr: numeric!
+  temperature: numeric!
+  temperature2: numeric!
+  timestamp: bigint!
+  updated_at: timestamptz!
+  vbat: numeric!
+}
+
+# aggregated selection of "device_record"
+type pebble_device_record_aggregate {
+  aggregate: pebble_device_record_aggregate_fields
+  nodes: [pebble_device_record!]!
+}
+
+input pebble_device_record_aggregate_bool_exp {
+  count: pebble_device_record_aggregate_bool_exp_count
+}
+
+input pebble_device_record_aggregate_bool_exp_count {
+  arguments: [pebble_device_record_select_column!]
+  distinct: Boolean
+  filter: pebble_device_record_bool_exp
+  predicate: Int_comparison_exp!
+}
+
+# aggregate fields of "device_record"
+type pebble_device_record_aggregate_fields {
+  avg: pebble_device_record_avg_fields
+  count(columns: [pebble_device_record_select_column!], distinct: Boolean): Int!
+  max: pebble_device_record_max_fields
+  min: pebble_device_record_min_fields
+  stddev: pebble_device_record_stddev_fields
+  stddev_pop: pebble_device_record_stddev_pop_fields
+  stddev_samp: pebble_device_record_stddev_samp_fields
+  sum: pebble_device_record_sum_fields
+  var_pop: pebble_device_record_var_pop_fields
+  var_samp: pebble_device_record_var_samp_fields
+  variance: pebble_device_record_variance_fields
+}
+
+# order by aggregate values of table "device_record"
+input pebble_device_record_aggregate_order_by {
+  avg: pebble_device_record_avg_order_by
+  count: order_by
+  max: pebble_device_record_max_order_by
+  min: pebble_device_record_min_order_by
+  stddev: pebble_device_record_stddev_order_by
+  stddev_pop: pebble_device_record_stddev_pop_order_by
+  stddev_samp: pebble_device_record_stddev_samp_order_by
+  sum: pebble_device_record_sum_order_by
+  var_pop: pebble_device_record_var_pop_order_by
+  var_samp: pebble_device_record_var_samp_order_by
+  variance: pebble_device_record_variance_order_by
+}
+
+# aggregate avg on columns
+type pebble_device_record_avg_fields {
+  gas_resistance: Float
+  humidity: Float
+  light: Float
+  pressure: Float
+  snr: Float
+  temperature: Float
+  temperature2: Float
+  timestamp: Float
+  vbat: Float
+}
+
+# order by avg() on columns of table "device_record"
+input pebble_device_record_avg_order_by {
+  gas_resistance: order_by
+  humidity: order_by
+  light: order_by
+  pressure: order_by
+  snr: order_by
+  temperature: order_by
+  temperature2: order_by
+  timestamp: order_by
+  vbat: order_by
+}
+
+# Boolean expression to filter rows from the table "device_record". All fields are combined with a logical 'AND'.
+input pebble_device_record_bool_exp {
+  _and: [pebble_device_record_bool_exp!]
+  _not: pebble_device_record_bool_exp
+  _or: [pebble_device_record_bool_exp!]
+  accelerometer: String_comparison_exp
+  created_at: timestamptz_comparison_exp
+  gas_resistance: numeric_comparison_exp
+  gyroscope: String_comparison_exp
+  humidity: numeric_comparison_exp
+  id: String_comparison_exp
+  imei: String_comparison_exp
+  latitude: String_comparison_exp
+  light: numeric_comparison_exp
+  longitude: String_comparison_exp
+  operator: String_comparison_exp
+  pressure: numeric_comparison_exp
+  signature: String_comparison_exp
+  snr: numeric_comparison_exp
+  temperature: numeric_comparison_exp
+  temperature2: numeric_comparison_exp
+  timestamp: bigint_comparison_exp
+  updated_at: timestamptz_comparison_exp
+  vbat: numeric_comparison_exp
+}
+
+# aggregate max on columns
+type pebble_device_record_max_fields {
+  accelerometer: String
+  created_at: timestamptz
+  gas_resistance: numeric
+  gyroscope: String
+  humidity: numeric
+  id: String
+  imei: String
+  latitude: String
+  light: numeric
+  longitude: String
+  operator: String
+  pressure: numeric
+  signature: String
+  snr: numeric
+  temperature: numeric
+  temperature2: numeric
+  timestamp: bigint
+  updated_at: timestamptz
+  vbat: numeric
+}
+
+# order by max() on columns of table "device_record"
+input pebble_device_record_max_order_by {
+  accelerometer: order_by
+  created_at: order_by
+  gas_resistance: order_by
+  gyroscope: order_by
+  humidity: order_by
+  id: order_by
+  imei: order_by
+  latitude: order_by
+  light: order_by
+  longitude: order_by
+  operator: order_by
+  pressure: order_by
+  signature: order_by
+  snr: order_by
+  temperature: order_by
+  temperature2: order_by
+  timestamp: order_by
+  updated_at: order_by
+  vbat: order_by
+}
+
+# aggregate min on columns
+type pebble_device_record_min_fields {
+  accelerometer: String
+  created_at: timestamptz
+  gas_resistance: numeric
+  gyroscope: String
+  humidity: numeric
+  id: String
+  imei: String
+  latitude: String
+  light: numeric
+  longitude: String
+  operator: String
+  pressure: numeric
+  signature: String
+  snr: numeric
+  temperature: numeric
+  temperature2: numeric
+  timestamp: bigint
+  updated_at: timestamptz
+  vbat: numeric
+}
+
+# order by min() on columns of table "device_record"
+input pebble_device_record_min_order_by {
+  accelerometer: order_by
+  created_at: order_by
+  gas_resistance: order_by
+  gyroscope: order_by
+  humidity: order_by
+  id: order_by
+  imei: order_by
+  latitude: order_by
+  light: order_by
+  longitude: order_by
+  operator: order_by
+  pressure: order_by
+  signature: order_by
+  snr: order_by
+  temperature: order_by
+  temperature2: order_by
+  timestamp: order_by
+  updated_at: order_by
+  vbat: order_by
+}
+
+# Ordering options when selecting data from "device_record".
+input pebble_device_record_order_by {
+  accelerometer: order_by
+  created_at: order_by
+  gas_resistance: order_by
+  gyroscope: order_by
+  humidity: order_by
+  id: order_by
+  imei: order_by
+  latitude: order_by
+  light: order_by
+  longitude: order_by
+  operator: order_by
+  pressure: order_by
+  signature: order_by
+  snr: order_by
+  temperature: order_by
+  temperature2: order_by
+  timestamp: order_by
+  updated_at: order_by
+  vbat: order_by
+}
+
+# select columns of table "device_record"
+enum pebble_device_record_select_column {
+  # column name
+  accelerometer
+
+  # column name
+  created_at
+
+  # column name
+  gas_resistance
+
+  # column name
+  gyroscope
+
+  # column name
+  humidity
+
+  # column name
+  id
+
+  # column name
+  imei
+
+  # column name
+  latitude
+
+  # column name
+  light
+
+  # column name
+  longitude
+
+  # column name
+  operator
+
+  # column name
+  pressure
+
+  # column name
+  signature
+
+  # column name
+  snr
+
+  # column name
+  temperature
+
+  # column name
+  temperature2
+
+  # column name
+  timestamp
+
+  # column name
+  updated_at
+
+  # column name
+  vbat
+}
+
+# aggregate stddev on columns
+type pebble_device_record_stddev_fields {
+  gas_resistance: Float
+  humidity: Float
+  light: Float
+  pressure: Float
+  snr: Float
+  temperature: Float
+  temperature2: Float
+  timestamp: Float
+  vbat: Float
+}
+
+# order by stddev() on columns of table "device_record"
+input pebble_device_record_stddev_order_by {
+  gas_resistance: order_by
+  humidity: order_by
+  light: order_by
+  pressure: order_by
+  snr: order_by
+  temperature: order_by
+  temperature2: order_by
+  timestamp: order_by
+  vbat: order_by
+}
+
+# aggregate stddev_pop on columns
+type pebble_device_record_stddev_pop_fields {
+  gas_resistance: Float
+  humidity: Float
+  light: Float
+  pressure: Float
+  snr: Float
+  temperature: Float
+  temperature2: Float
+  timestamp: Float
+  vbat: Float
+}
+
+# order by stddev_pop() on columns of table "device_record"
+input pebble_device_record_stddev_pop_order_by {
+  gas_resistance: order_by
+  humidity: order_by
+  light: order_by
+  pressure: order_by
+  snr: order_by
+  temperature: order_by
+  temperature2: order_by
+  timestamp: order_by
+  vbat: order_by
+}
+
+# aggregate stddev_samp on columns
+type pebble_device_record_stddev_samp_fields {
+  gas_resistance: Float
+  humidity: Float
+  light: Float
+  pressure: Float
+  snr: Float
+  temperature: Float
+  temperature2: Float
+  timestamp: Float
+  vbat: Float
+}
+
+# order by stddev_samp() on columns of table "device_record"
+input pebble_device_record_stddev_samp_order_by {
+  gas_resistance: order_by
+  humidity: order_by
+  light: order_by
+  pressure: order_by
+  snr: order_by
+  temperature: order_by
+  temperature2: order_by
+  timestamp: order_by
+  vbat: order_by
+}
+
+# aggregate sum on columns
+type pebble_device_record_sum_fields {
+  gas_resistance: numeric
+  humidity: numeric
+  light: numeric
+  pressure: numeric
+  snr: numeric
+  temperature: numeric
+  temperature2: numeric
+  timestamp: bigint
+  vbat: numeric
+}
+
+# order by sum() on columns of table "device_record"
+input pebble_device_record_sum_order_by {
+  gas_resistance: order_by
+  humidity: order_by
+  light: order_by
+  pressure: order_by
+  snr: order_by
+  temperature: order_by
+  temperature2: order_by
+  timestamp: order_by
+  vbat: order_by
+}
+
+# aggregate var_pop on columns
+type pebble_device_record_var_pop_fields {
+  gas_resistance: Float
+  humidity: Float
+  light: Float
+  pressure: Float
+  snr: Float
+  temperature: Float
+  temperature2: Float
+  timestamp: Float
+  vbat: Float
+}
+
+# order by var_pop() on columns of table "device_record"
+input pebble_device_record_var_pop_order_by {
+  gas_resistance: order_by
+  humidity: order_by
+  light: order_by
+  pressure: order_by
+  snr: order_by
+  temperature: order_by
+  temperature2: order_by
+  timestamp: order_by
+  vbat: order_by
+}
+
+# aggregate var_samp on columns
+type pebble_device_record_var_samp_fields {
+  gas_resistance: Float
+  humidity: Float
+  light: Float
+  pressure: Float
+  snr: Float
+  temperature: Float
+  temperature2: Float
+  timestamp: Float
+  vbat: Float
+}
+
+# order by var_samp() on columns of table "device_record"
+input pebble_device_record_var_samp_order_by {
+  gas_resistance: order_by
+  humidity: order_by
+  light: order_by
+  pressure: order_by
+  snr: order_by
+  temperature: order_by
+  temperature2: order_by
+  timestamp: order_by
+  vbat: order_by
+}
+
+# aggregate variance on columns
+type pebble_device_record_variance_fields {
+  gas_resistance: Float
+  humidity: Float
+  light: Float
+  pressure: Float
+  snr: Float
+  temperature: Float
+  temperature2: Float
+  timestamp: Float
+  vbat: Float
+}
+
+# order by variance() on columns of table "device_record"
+input pebble_device_record_variance_order_by {
+  gas_resistance: order_by
+  humidity: order_by
+  light: order_by
+  pressure: order_by
+  snr: order_by
+  temperature: order_by
+  temperature2: order_by
+  timestamp: order_by
+  vbat: order_by
+}
+
+# select columns of table "device"
+enum pebble_device_select_column {
+  # column name
+  address
+
+  # column name
+  avatar
+
+  # column name
+  beep
+
+  # column name
+  bulk_upload
+
+  # column name
+  bulk_upload_sampling_cnt
+
+  # column name
+  bulk_upload_sampling_freq
+
+  # column name
+  config
+
+  # column name
+  configurable
+
+  # column name
+  created_at
+
+  # column name
+  data_channel
+
+  # column name
+  firmware
+
+  # column name
+  id
+
+  # column name
+  name
+
+  # column name
+  owner
+
+  # column name
+  proposer
+
+  # column name
+  real_firmware
+
+  # column name
+  state
+
+  # column name
+  status
+
+  # column name
+  total_gas
+
+  # column name
+  type
+
+  # column name
+  updated_at
+
+  # column name
+  upload_period
+}
+
+# aggregate stddev on columns
+type pebble_device_stddev_fields {
+  beep: Float
+  bulk_upload: Float
+  bulk_upload_sampling_cnt: Float
+  bulk_upload_sampling_freq: Float
+  data_channel: Float
+  state: Float
+  status: Float
+  total_gas: Float
+  type: Float
+  upload_period: Float
+}
+
+# aggregate stddev_pop on columns
+type pebble_device_stddev_pop_fields {
+  beep: Float
+  bulk_upload: Float
+  bulk_upload_sampling_cnt: Float
+  bulk_upload_sampling_freq: Float
+  data_channel: Float
+  state: Float
+  status: Float
+  total_gas: Float
+  type: Float
+  upload_period: Float
+}
+
+# aggregate stddev_samp on columns
+type pebble_device_stddev_samp_fields {
+  beep: Float
+  bulk_upload: Float
+  bulk_upload_sampling_cnt: Float
+  bulk_upload_sampling_freq: Float
+  data_channel: Float
+  state: Float
+  status: Float
+  total_gas: Float
+  type: Float
+  upload_period: Float
+}
+
+# aggregate sum on columns
+type pebble_device_sum_fields {
+  beep: Int
+  bulk_upload: Int
+  bulk_upload_sampling_cnt: Int
+  bulk_upload_sampling_freq: Int
+  data_channel: Int
+  state: Int
+  status: Int
+  total_gas: Int
+  type: Int
+  upload_period: Int
+}
+
+# aggregate var_pop on columns
+type pebble_device_var_pop_fields {
+  beep: Float
+  bulk_upload: Float
+  bulk_upload_sampling_cnt: Float
+  bulk_upload_sampling_freq: Float
+  data_channel: Float
+  state: Float
+  status: Float
+  total_gas: Float
+  type: Float
+  upload_period: Float
+}
+
+# aggregate var_samp on columns
+type pebble_device_var_samp_fields {
+  beep: Float
+  bulk_upload: Float
+  bulk_upload_sampling_cnt: Float
+  bulk_upload_sampling_freq: Float
+  data_channel: Float
+  state: Float
+  status: Float
+  total_gas: Float
+  type: Float
+  upload_period: Float
+}
+
+# aggregate variance on columns
+type pebble_device_variance_fields {
+  beep: Float
+  bulk_upload: Float
+  bulk_upload_sampling_cnt: Float
+  bulk_upload_sampling_freq: Float
+  data_channel: Float
+  state: Float
+  status: Float
+  total_gas: Float
+  type: Float
+  upload_period: Float
+}
+
+type query_root {
+  hello: String!
+
+  # fetch data from the table: "device"
+  pebble_device(
+    # distinct select on columns
+    distinct_on: [pebble_device_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [pebble_device_order_by!]
+
+    # filter the rows returned
+    where: pebble_device_bool_exp
+  ): [pebble_device!]!
+
+  # fetch aggregated fields from the table: "device"
+  pebble_device_aggregate(
+    # distinct select on columns
+    distinct_on: [pebble_device_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [pebble_device_order_by!]
+
+    # filter the rows returned
+    where: pebble_device_bool_exp
+  ): pebble_device_aggregate!
+
+  # fetch data from the table: "device_record"
+  pebble_device_record(
+    # distinct select on columns
+    distinct_on: [pebble_device_record_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [pebble_device_record_order_by!]
+
+    # filter the rows returned
+    where: pebble_device_record_bool_exp
+  ): [pebble_device_record!]!
+
+  # fetch aggregated fields from the table: "device_record"
+  pebble_device_record_aggregate(
+    # distinct select on columns
+    distinct_on: [pebble_device_record_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [pebble_device_record_order_by!]
+
+    # filter the rows returned
+    where: pebble_device_record_bool_exp
+  ): pebble_device_record_aggregate!
+}
+
+scalar timestamptz
+
+# Boolean expression to compare columns of type "timestamptz". All fields are combined with logical 'AND'.
+input timestamptz_comparison_exp {
+  _eq: timestamptz
+  _gt: timestamptz
+  _gte: timestamptz
+  _in: [timestamptz!]
+  _is_null: Boolean
+  _lt: timestamptz
+  _lte: timestamptz
+  _neq: timestamptz
+  _nin: [timestamptz!]
+}

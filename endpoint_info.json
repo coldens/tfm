@@ -1,0 +1,29 @@
+{
+  "endpoint_name": "randomcutforest-2025-07-28-09-45-41-671",
+  "model_path": "s3://pebble-model-artifacts-eu-north-1/rcf-anomaly-detection",
+  "instance_type": "ml.m5.large",
+  "features": [
+    "accel_x",
+    "accel_y",
+    "accel_z",
+    "gyro_x",
+    "gyro_y",
+    "gyro_z",
+    "temperature",
+    "temperature2",
+    "humidity",
+    "pressure",
+    "light",
+    "gas_resistance",
+    "snr",
+    "vbat",
+    "latitude",
+    "longitude",
+    "hour",
+    "day_of_week"
+  ],
+  "feature_count": 18,
+  "training_job": "randomcutforest-2025-07-28-09-39-59-783",
+  "created_at": "2025-07-28T09:49:43.743065",
+  "threshold": 0.08
+}
